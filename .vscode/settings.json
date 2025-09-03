@@ -1,0 +1,27 @@
+{
+  "files.exclude": {
+    "**/.git": false,
+    "**/.github": false,
+    "**/.env": false,
+    "**/runs": false
+  },
+
+  "[python]": {
+    // Black をデフォルトフォーマッタに
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit"
+    }
+  },
+
+  // Lint を有効化
+  "ruff.lint.enable": true,
+  // Ruff のフォーマッタは無効（Black を使うため）
+  // "ruff.format.enable": "",
+
+  // 保存時に Ruff の自動修正を実行
+  // "editor.codeActionsOnSave": {
+  //   "source.fixAll.ruff": "always"
+  // }
+}
