@@ -1,0 +1,105 @@
+{
+  "created_at": "2025-09-10T13:37:13Z",
+  "best_score": 0.0,
+  "best_params": {
+    "rsi.length": 34,
+    "sma.len": 20,
+    "bb.mult": 2.5,
+    "bb.window": 20,
+    "entry.rsi_gt": 64,
+    "exit.rsi_lt": 44
+  },
+  "features_spec": {
+    "rsi_34": {
+      "kind": "rsi",
+      "true": "close",
+      "params": {
+        "length": 34
+      }
+    },
+    "sma_20": {
+      "kind": "sma",
+      "true": "close",
+      "params": {
+        "length": 20
+      }
+    },
+    "bb_20_2.5": {
+      "kind": "bb",
+      "true": "close",
+      "params": {
+        "window": 20,
+        "mult": 2.5
+      }
+    }
+  },
+  "plan_spec": {
+    "preconditions": [
+      {
+        "op": "eq",
+        "left": "session_active",
+        "right": true
+      }
+    ],
+    "entries": [
+      {
+        "op": "gt",
+        "left": "rsi_34",
+        "right": 64,
+        "pre_shift": 1
+      },
+      {
+        "op": "cross_over",
+        "left": "sma_20",
+        "right": "bb_20_2.5_middle",
+        "pre_shift": 1
+      }
+    ],
+    "exits": [
+      {
+        "op": "lt",
+        "left": "rsi_34",
+        "right": 44,
+        "pre_shift": 1
+      }
+    ]
+  },
+  "space": {
+    "rsi.length": {
+      "type": "int",
+      "low": 5,
+      "high": 40,
+      "step": 1
+    },
+    "sma.len": {
+      "type": "int",
+      "low": 5,
+      "high": 60,
+      "step": 5
+    },
+    "bb.mult": {
+      "type": "float",
+      "low": 1.0,
+      "high": 3.0,
+      "step": 0.25
+    },
+    "bb.window": {
+      "type": "int",
+      "low": 10,
+      "high": 40,
+      "step": 2
+    },
+    "entry.rsi_gt": {
+      "type": "int",
+      "low": 45,
+      "high": 65,
+      "step": 1
+    },
+    "exit.rsi_lt": {
+      "type": "int",
+      "low": 35,
+      "high": 55,
+      "step": 1
+    }
+  }
+}

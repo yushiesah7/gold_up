@@ -1,0 +1,43 @@
+# RSI only strategy spec
+
+features:
+  rsi_{{rsi.length}}:
+    kind: rsi
+    on: close
+    params: { length: "{{rsi.length}}" }
+
+plan:
+  preconditions:
+    - { op: eq, left: "session_active", right: true }
+  entries:
+    - { op: gt, left: "rsi_{{rsi.length}}", right: "{{entry.rsi_gt}}" }
+  exits:
+    - { op: lt, left: "rsi_{{rsi.length}}", right: "{{exit.rsi_lt}}" }
+
+space:
+  rsi.length:   { type: int,   low: 5,  high: 40, step: 1 }
+  entry.rsi_gt: { type: int,   low: 40, high: 70, step: 1 }
+  exit.rsi_lt:  { type: int,   low: 30, high: 55, step: 1 }
+
+universe:
+  symbols: [EURUSD]
+  timeframes: [m15]
+
+sessions:
+  - { name: LONDON, type: window, start: "08:00", end: "17:00", tz: "Europe/London" }
+
+run_params:
+  fees: 0.00016
+  slippage: 0.0001
+  size: 1.0
+  size_type: percent
+  init_cash: 100000
+  leverage: 1.0
+  cash_sharing: true
+  accumulate: true
+  max_entries: 3
+  sl_trail: true
+  max_positions: 3
+  session_preset: { name: LONDON, type: window, start: "08:00", end: "17:00", tz: "Europe/London" }
+  sl_pct: 0.003
+  rr: 2.0

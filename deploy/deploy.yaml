@@ -1,0 +1,60 @@
+version: 1
+generated_at: '2025-09-10T00:05:08Z'
+base_tz: UTC
+source:
+  summary_csv: runs\summary.csv
+  spec: spec.yaml
+strategies:
+- id: EURUSD_M15_ALLDAY
+  symbol: EURUSD
+  timeframe: m15
+  session:
+    preset: ALLDAY
+  score: 3.847099725350536
+  features:
+    rsi_{{rsi.length}}:
+      kind: rsi
+      true: close
+      params:
+        length: '{{rsi.length}}'
+    sma_{{sma.len}}:
+      kind: sma
+      true: close
+      params:
+        length: '{{sma.len}}'
+    bb_{{bb.window}}_{{bb.mult}}:
+      kind: bb
+      true: close
+      params:
+        window: '{{bb.window}}'
+        mult: '{{bb.mult}}'
+  plan:
+    preconditions:
+    - op: eq
+      left: session_active
+      right: true
+    entries:
+    - op: gt
+      left: rsi_{{rsi.length}}
+      right: '{{entry.rsi_gt}}'
+      pre_shift: 1
+    - op: cross_over
+      left: sma_{{sma.len}}
+      right: bb_{{bb.window}}_{{bb.mult}}_middle
+      pre_shift: 1
+    exits:
+    - op: lt
+      left: rsi_{{rsi.length}}
+      right: '{{exit.rsi_lt}}'
+      pre_shift: 1
+  params:
+    rsi.length: 30
+    sma.len: 60
+    bb.mult: 3.0
+    bb.window: 30
+    entry.rsi_gt: 65
+    exit.rsi_lt: 35
+deploy:
+  position_cap: auto
+  risk_model:
+    type: none
