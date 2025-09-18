@@ -1,0 +1,10 @@
+# Selection criteria for auto-picking champion strategies
+# DDD/Hexa: this file is read by apps/deploy/cli_selector.py and applied in domain/services/selection_service.py
+
+min_sharpe: 1.0
+min_compounded: 0.0
+min_folds: 3
+# Optional: reject if left-tail (bottom 5% mean) is below this threshold
+max_left_tail: -0.05
+# Optional: minimum number of trades if available in logs (not enforced if null)
+min_trades: null

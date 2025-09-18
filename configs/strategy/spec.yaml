@@ -1,0 +1,86 @@
+# spec.yaml (copied baseline)
+
+# ---- 特徴量（features） ----
+features:
+  rsi_{{rsi.length}}:
+    kind: rsi
+    on: close
+    params: { length: "{{rsi.length}}" }
+
+  sma_{{sma.len}}:
+    kind: sma
+    on: close
+    params: { length: "{{sma.len}}" }
+
+  bb_{{bb.window}}_{{bb.mult}}:
+    kind: bb
+    on: close
+    params: { window: "{{bb.window}}", mult: "{{bb.mult}}" }
+
+# ---- 戦略（plan） ----
+plan:
+  preconditions:
+    - { op: eq, left: "session_active", right: true }   # ある場合のみ有効
+  entries:
+    - { op: gt, left: "rsi_{{rsi.length}}", right: "{{entry.rsi_gt}}", pre_shift: 1 }
+    - { op: cross_over, left: "sma_{{sma.len}}", right: "bb_{{bb.window}}_{{bb.mult}}_middle", pre_shift: 1 }
+  exits: []
+    # - { op: lt, left: "rsi_{{rsi.length}}", right: "{{exit.rsi_lt}}", pre_shift: 1 }
+
+# ---- 探索空間（space） ----
+space:
+  rsi.length:   { type: int,   low: 5,  high: 40, step: 1 }
+  sma.len:      { type: int,   low: 5,  high: 60, step: 5 }
+  bb.mult:      { type: float, low: 1.0, high: 3.0, step: 0.25 }
+  bb.window:    { type: int,   low: 10, high: 40, step: 2 }
+  entry.rsi_gt: { type: int,   low: 45, high: 65, step: 1 }
+  exit.rsi_lt:  { type: int,   low: 35, high: 55, step: 1 }
+
+# # ---- ユニバース（7通貨 × TF） ----
+# universe:
+#   symbols: [EURUSD, USDJPY, GBPUSD, AUDUSD, USDCHF, EURJPY, GBPJPY]
+#   timeframes: [m15, h1]
+
+# # ---- セッション（DST対応TZ） ----
+# sessions:
+#   - { name: ALLDAY, type: all, tz: UTC }
+#   - { name: LONDON, type: window, start: "08:00", end: "17:00", tz: Europe/London }
+#   - { name: NY,     type: window, start: "09:30", end: "16:00", tz: America/New_York }
+#   - { name: TOKYO,  type: window, start: "09:00", end: "15:00", tz: Asia/Tokyo }
+
+# ---- ユニバース（切り分け用に最小化）----
+universe:
+  symbols: [EURUSD]
+  timeframes: [m15]
+
+# ---- セッション（切り分け用に最小化）----
+sessions:
+  # - { name: ALLDAY, type: all, tz: UTC }
+  - { name: LONDON, type: window, start: "08:00", end: "17:00", tz: "Europe/London" }
+
+run_params:
+  fees: 0.00016        # 約1.6 pip 近似（片道比率）
+  slippage: 0.0001     # 約1.0 pip 近似
+  size: 1.0
+  size_type: percent
+  init_cash: 100000
+  leverage: 1.0
+  cash_sharing: true
+  # 複数建て許可（PF 側に伝播）
+  accumulate: true
+  # 最大段数（PF 側で受理される場合）
+  max_entries: 3
+  # トレーリングストップ（対応環境で有効）
+  sl_trail: true
+  # 同時保有上限（EntryGateの安全キャップで使用）
+  max_positions: 3
+  # セッション有効化（plan.preconditions: session_active==true を満たすため）
+  session_preset: { name: ALLDAY, type: all, tz: UTC }
+
+  # RR（どちらか一方でOK）
+  sl_pct: 0.003        # 0.3%
+  rr: 3.0              # -> tp_pct = 0.0045 に内部換算
+  # または ATR ベース（相対換算）
+  # sl_atr_mult: 2.0
+  # tp_atr_mult: 3.0
+  # atr_window: 14

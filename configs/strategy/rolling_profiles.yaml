@@ -1,0 +1,88 @@
+# 固定IS/OOS定義（セッション×タイムフレーム）
+# 実行時は run_params.session_preset と splitter(train_bars/test_bars) に反映
+
+profiles:
+  # ---- H1 全セッション ----
+  h1_all:
+    timeframe: h1
+    session_preset: { name: ALL, type: all, tz: UTC }
+    # 約3ヶ月: 24*90 本、約1ヶ月: 24*30 本
+    train_bars: 24*90
+    test_bars: 24*30
+    purge_bars: 24
+    embargo_bars: 24
+
+  # ---- H1 各セッション ----
+  h1_sydney:
+    timeframe: h1
+    session_preset: { name: SYDNEY, type: window, start: "22:00", end: "07:00", tz: UTC }
+    train_bars: 24*90
+    test_bars: 24*30
+    purge_bars: 24
+    embargo_bars: 24
+
+  h1_tokyo:
+    timeframe: h1
+    session_preset: { name: TOKYO, type: window, start: "00:00", end: "09:00", tz: UTC }
+    train_bars: 24*90
+    test_bars: 24*30
+    purge_bars: 24
+    embargo_bars: 24
+
+  h1_london:
+    timeframe: h1
+    session_preset: { name: LONDON, type: window, start: "08:00", end: "17:00", tz: "Europe/London" }
+    train_bars: 24*90
+    test_bars: 24*21
+    purge_bars: 24
+    embargo_bars: 24
+
+  h1_newyork:
+    timeframe: h1
+    session_preset: { name: NEWYORK, type: window, start: "13:00", end: "22:00", tz: UTC }
+    train_bars: 24*90
+    test_bars: 24*21
+    purge_bars: 24
+    embargo_bars: 24
+
+  # ---- M15 全セッション ----
+  m15_all:
+    timeframe: m15
+    session_preset: { name: ALL, type: all, tz: UTC }
+    train_bars: 24*4*14        # 2週間（資料：1〜2週）
+    test_bars: 24*4*7          # 1週間（資料：数日〜1週）
+    purge_bars: 24*4
+    embargo_bars: 24*4
+
+  # ---- M15 各セッション ----
+  m15_sydney:
+    timeframe: m15
+    session_preset: { name: SYDNEY, type: window, start: "22:00", end: "07:00", tz: UTC }
+    train_bars: 24*4*14
+    test_bars: 24*4*7
+    purge_bars: 24*4
+    embargo_bars: 24*4
+
+  m15_tokyo:
+    timeframe: m15
+    session_preset: { name: TOKYO, type: window, start: "00:00", end: "09:00", tz: UTC }
+    train_bars: 24*4*14
+    test_bars: 24*4*7
+    purge_bars: 24*4
+    embargo_bars: 24*4
+
+  m15_london:
+    timeframe: m15
+    session_preset: { name: LONDON, type: window, start: "08:00", end: "17:00", tz: "Europe/London" }
+    train_bars: 24*4*14
+    test_bars: 24*4*7
+    purge_bars: 24*4
+    embargo_bars: 24*4
+
+  m15_newyork:
+    timeframe: m15
+    session_preset: { name: NEWYORK, type: window, start: "13:00", end: "22:00", tz: UTC }
+    train_bars: 24*4*14
+    test_bars: 24*4*7
+    purge_bars: 24*4
+    embargo_bars: 24*4

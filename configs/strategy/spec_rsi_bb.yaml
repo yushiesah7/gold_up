@@ -1,0 +1,52 @@
+# RSI + Bollinger Bands strategy spec
+
+features:
+  rsi_{{rsi.length}}:
+    kind: rsi
+    on: close
+    params: { length: "{{rsi.length}}" }
+
+  bb_{{bb.window}}_{{bb.mult}}:
+    kind: bb
+    on: close
+    params: { window: "{{bb.window}}", mult: "{{bb.mult}}" }
+
+plan:
+  preconditions:
+    - { op: eq, left: "session_active", right: true }
+  entries:
+    - { op: gt, left: "rsi_{{rsi.length}}", right: "{{entry.rsi_gt}}" }
+    # featuresベース比較（smaをBBミドルの代理に使う or BBミドルとの差が正ならエントリー等）
+    # ここでは BBミドル自体は features に存在するため、差分列は未計算。
+    # 単独のRSI条件のみでKeyError回避を優先。
+  exits: []
+
+space:
+  rsi.length:   { type: int,   low: 5,  high: 40, step: 1 }
+  bb.window:    { type: int,   low: 10, high: 40, step: 2 }
+  bb.mult:      { type: float, low: 1.0, high: 3.0, step: 0.25 }
+  entry.rsi_gt: { type: int,   low: 40, high: 70, step: 1 }
+  exit.rsi_lt:  { type: int,   low: 30, high: 55, step: 1 }
+
+universe:
+  symbols: [EURUSD]
+  timeframes: [m15]
+
+sessions:
+  - { name: LONDON, type: window, start: "08:00", end: "17:00", tz: "Europe/London" }
+
+run_params:
+  fees: 0.00016
+  slippage: 0.0001
+  size: 1.0
+  size_type: percent
+  init_cash: 100000
+  leverage: 1.0
+  cash_sharing: true
+  accumulate: true
+  max_entries: 3
+  sl_trail: true
+  max_positions: 3
+  session_preset: { name: LONDON, type: window, start: "08:00", end: "17:00", tz: "Europe/London" }
+  sl_pct: 0.003
+  rr: 2.0
